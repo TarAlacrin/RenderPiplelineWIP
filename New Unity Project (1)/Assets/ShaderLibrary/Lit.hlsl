@@ -77,9 +77,8 @@ float3 DiffuseLight (int index, float3 normal, float3 worldPos, float shadowAtte
 	spotFade *= spotFade;
 
 	float distanceSqr = max(lightVectorMagSqrd, 0.00001);
-	diffuse *= shadowAttenuation*spotFade*rangeFade/distanceSqr;
-
-	return shadowAttenuation; //diffuse * lightColor;
+	diffuse *= shadowAttenuation* spotFade*rangeFade/distanceSqr;
+	return diffuse * lightColor;
 }
 
 
@@ -94,6 +93,7 @@ struct VertexOutput {
 	float4 pos : SV_POSITION;
 	float3 normal : TEXCOORD0;
 	float3 worldPos : TEXCOORD1;
+	float3 vertexLighting : TEXCOORD2;
 
 	UNITY_VERTEX_INPUT_INSTANCE_ID
 };
@@ -103,11 +103,19 @@ VertexOutput LitPassVertex(VertexInput input) {
 	UNITY_SETUP_INSTANCE_ID(input);//used when gpu Instancing is enabled to get the proper Model Matrix
 	UNITY_TRANSFER_INSTANCE_ID(input, output);//this is used so that the fragment can use instanced variables
 
-	output.normal = mul((float3x3)UNITY_MATRIX_M, input.normal);
 
 	float4 worldPos = mul(UNITY_MATRIX_M, float4(input.vertex.xyz, 1.0));
 	output.worldPos = worldPos.xyz;
 	output.pos = mul(unity_MatrixVP, worldPos);
+	output.normal = mul((float3x3)UNITY_MATRIX_M, input.normal);
+
+	output.vertexLighting = 0;
+	for (int i = 4; i < min(unity_LightData.y, 8); i++) {
+		int lightIndex = unity_LightIndices[1][i - 4];
+		output.vertexLighting +=
+			DiffuseLight(lightIndex, output.normal, output.worldPos,1);
+	}
+
 	return output;
 } 
 
@@ -118,22 +126,24 @@ float4 LitPassFragment(VertexOutput input) : SV_TARGET
 	float3 albedo = UNITY_ACCESS_INSTANCED_PROP (PerInstance,_Color).rgb;
 
 
-	float3 diffuseLight = 0;
-	int i0 = 0;
-	for (int j = 0; i0 < unity_LightData.y; j++)
-	{
-		for (int i = 0; (i<4 && i0<unity_LightData.y); i++) 
-		{
-			i0 = i + j * 4;
-			//int bigI = floor(i / 4);
-			//int lilI = fmod(i, 4);
-			int lightIndex = unity_LightIndices[j][i];
-			float shadowAttenuation = ShadowAttenuation(input.worldPos);
-			diffuseLight += shadowAttenuation;//DiffuseLight(lightIndex, input.normal, input.worldPos.xyz, shadowAttenuation);
-		}
-	}
+	float3 diffuseLight = input.vertexLighting;
+	//int i0 = 0;
+	//for (int j = 0; i0 < unity_LightData.y; j++)
+	//{
+	//	for (int i = 0; (i<4 && i0<unity_LightData.y); i++) 
+	//	{
+	//		i0 = i + j * 4;
 
-	float3 color = diffuseLight * albedo;
+	for (int i = 0; i < min(unity_LightData.y, 4); i++)
+	{
+		int lightIndex = unity_LightIndices[0][i];
+		float shadowAttenuation = ShadowAttenuation(input.worldPos);
+		diffuseLight += DiffuseLight(lightIndex, input.normal, input.worldPos.xyz, shadowAttenuation);
+	}
+	//	}
+	//}
+
+	float3 color = diffuseLight;// * albedo;
 
 	return float4(color, 1.0);
 }
