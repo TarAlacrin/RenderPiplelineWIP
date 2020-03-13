@@ -27,6 +27,12 @@ struct VertexOutput {
 	float4 pos : SV_POSITION;
 };
 
+CBUFFER_START(_ShadowCasterBuffer)
+	float _ShadowBias;
+CBUFFER_END
+
+
+
 VertexOutput ShadowCasterPassVertex(VertexInput input) {
 	VertexOutput output;
 	UNITY_SETUP_INSTANCE_ID(input);//used when gpu Instancing is enabled to get the proper Model Matrix
@@ -38,8 +44,10 @@ VertexOutput ShadowCasterPassVertex(VertexInput input) {
 	//this clamps the vertexes to the minimum z plane
 	//in OpenGL the z value is flipped. Or rather, in non OpenGL its flipped reverse to the intuitive understanding that the near clip plane of the camera is the low number
 	#if UNITY_REVERSED_Z
+		output.pos.z -= _ShadowBias;
 		output.pos.z = min(output.pos.z, output.pos.w*UNITY_NEAR_CLIP_VALUE);
 	#else
+		output.pos.z += _ShadowBias;
 		output.pos.z = max(output.pos.z, output.pos.w*UNITY_NEAR_CLIP_VALUE);
 	#endif
 

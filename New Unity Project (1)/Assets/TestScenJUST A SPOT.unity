@@ -166,7 +166,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78a55aaefd7b19f4689e046a2505420f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  color: {r: 2.8944578, g: 1.5847877, b: 2.5236025, a: 3.9049752}
+  color: {r: 1.3044893, g: 1.4019192, b: 1.4618678, a: 4.576086}
 --- !u!135 &122076826
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -240,7 +240,7 @@ GameObject:
   - component: {fileID: 140025251}
   - component: {fileID: 140025250}
   m_Layer: 0
-  m_Name: Sphere (43)
+  m_Name: Sphere (432)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -272,7 +272,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78a55aaefd7b19f4689e046a2505420f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  color: {r: 0.85565746, g: 1.4470214, b: 1.634355, a: 3.6510537}
+  color: {r: 1.1227453, g: 0.8562419, b: 0.8100494, a: 2.8885145}
 --- !u!135 &140025251
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -378,7 +378,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78a55aaefd7b19f4689e046a2505420f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  color: {r: 0.526721, g: 1.1868705, b: 0.6841012, a: 3.6377468}
+  color: {r: 1.6255202, g: 0.40826756, b: 0.71318734, a: 3.2326796}
 --- !u!135 &178265592
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -484,7 +484,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78a55aaefd7b19f4689e046a2505420f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  color: {r: 2.4554908, g: 2.4893706, b: 2.3387065, a: 2.9801614}
+  color: {r: 0.6111493, g: 1.5579978, b: 1.1512121, a: 4.111167}
 --- !u!135 &288584421
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -574,17 +574,17 @@ Light:
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 212.92
   m_Range: 21.03
-  m_SpotAngle: 110.3
-  m_InnerSpotAngle: 21.80208
+  m_SpotAngle: 74
+  m_InnerSpotAngle: 1
   m_CookieSize: 10
   m_Shadows:
     m_Type: 1
     m_Resolution: -1
     m_CustomResolution: -1
     m_Strength: 1
-    m_Bias: 0.05
+    m_Bias: 1.859
     m_NormalBias: 0.4
-    m_NearPlane: 0.2
+    m_NearPlane: 3.72
     m_CullingMatrixOverride:
       e00: 1
       e01: 0
@@ -629,7 +629,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 460509503}
   m_LocalRotation: {x: 0.03236707, y: 0.74294657, z: -0.2899292, w: 0.60243165}
-  m_LocalPosition: {x: -32.9, y: 8.58, z: -1.85}
+  m_LocalPosition: {x: -32.98, y: 8.61, z: -1.84}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -649,7 +649,7 @@ GameObject:
   - component: {fileID: 505774296}
   - component: {fileID: 505774295}
   m_Layer: 0
-  m_Name: Sphere (39)
+  m_Name: Sphere (392)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -681,7 +681,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78a55aaefd7b19f4689e046a2505420f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  color: {r: 1.7553945, g: 1.7325978, b: 1.7478384, a: 4.7053375}
+  color: {r: 0.5848423, g: 0.5164658, b: 0.4941243, a: 2.3512416}
 --- !u!135 &505774296
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -828,7 +828,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 523825470}
   m_LocalRotation: {x: -0, y: -0, z: 0.4999996, w: 0.8660257}
-  m_LocalPosition: {x: -27.9, y: 6.8, z: -0.22777367}
+  m_LocalPosition: {x: 9.7, y: -14.9, z: -0.22777367}
   m_LocalScale: {x: 3.845, y: 3.845, z: 3.845}
   m_Children: []
   m_Father: {fileID: 0}
@@ -848,7 +848,7 @@ GameObject:
   - component: {fileID: 665385335}
   - component: {fileID: 665385334}
   m_Layer: 0
-  m_Name: Sphere (34)
+  m_Name: Sphere (322)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -880,7 +880,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78a55aaefd7b19f4689e046a2505420f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  color: {r: 0.4012222, g: 0.41148624, b: 0.393928, a: 3.144079}
+  color: {r: 2.3065133, g: 3.4275727, b: 2.0526927, a: 4.1673136}
 --- !u!135 &665385335
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -954,7 +954,7 @@ GameObject:
   - component: {fileID: 1100179085}
   - component: {fileID: 1100179084}
   m_Layer: 0
-  m_Name: Sphere (44)
+  m_Name: Sphere (442)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -986,7 +986,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78a55aaefd7b19f4689e046a2505420f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  color: {r: 1.5867442, g: 1.2870692, b: 1.5985357, a: 3.879776}
+  color: {r: 1.8265675, g: 1.4501029, b: 1.2898175, a: 2.20675}
 --- !u!135 &1100179085
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -1161,13 +1161,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1655243152}
-  m_LocalRotation: {x: 0.44801682, y: 0.12371126, z: 0.039137006, w: 0.88455915}
-  m_LocalPosition: {x: -32.79, y: 21.29, z: -15.61}
+  m_LocalRotation: {x: 0.45974576, y: 0.49678862, z: 0.029769054, w: 0.7354921}
+  m_LocalPosition: {x: -34.74, y: 11.65, z: -2.24}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 51.528004, y: 24.089, z: 16.826}
+  m_LocalEulerAnglesHint: {x: 40.293003, y: 83.702, z: 41.018}
 --- !u!1 &2010971314
 GameObject:
   m_ObjectHideFlags: 0
@@ -1182,7 +1182,7 @@ GameObject:
   - component: {fileID: 2010971317}
   - component: {fileID: 2010971316}
   m_Layer: 0
-  m_Name: Sphere (39)
+  m_Name: Sphere (392)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1214,7 +1214,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78a55aaefd7b19f4689e046a2505420f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  color: {r: 3.2893145, g: 4.2522354, b: 4.245575, a: 4.719716}
+  color: {r: 2.2053797, g: 1.1777554, b: 4.232897, a: 4.684953}
 --- !u!135 &2010971317
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -1320,7 +1320,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78a55aaefd7b19f4689e046a2505420f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  color: {r: 1.4769834, g: 1.4666064, b: 1.4550976, a: 2.1478245}
+  color: {r: 0.57440066, g: 0.4402635, b: 0.42833948, a: 3.393643}
 --- !u!135 &2110224607
 SphereCollider:
   m_ObjectHideFlags: 0

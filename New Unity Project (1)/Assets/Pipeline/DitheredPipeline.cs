@@ -23,7 +23,12 @@ public class DitheredPipeline : RenderPipeline
 	static int shadowMapId = 
 		Shader.PropertyToID("_ShadowMap");
 	static int worldToShadowMatrixId =
-	Shader.PropertyToID("_WorldToShadowMatrix");
+		Shader.PropertyToID("_WorldToShadowMatrix");
+	static int shadowBiasId = 
+		Shader.PropertyToID("_ShadowBias");
+	static int shadowStrengthId = 
+		Shader.PropertyToID("_ShadowStrength");
+
 
 
 	Vector4[] visibleLightColors = new Vector4[maxVisibleLights];
@@ -31,12 +36,14 @@ public class DitheredPipeline : RenderPipeline
 	Vector4[] visibleLightAttenuations = new Vector4[maxVisibleLights];
 	Vector4[] visibleLightSpotDirections = new Vector4[maxVisibleLights];
 
+	int shadowMapSize;
 
-	public DitheredPipeline(bool dynamicBatching, bool instancing)
+	public DitheredPipeline(bool dynamicBatching, bool instancing, int shadowMapSize)
 	{
 		GraphicsSettings.lightsUseLinearIntensity = true;
 		enableDynamicBatching = dynamicBatching;
 		gpuInstancing = instancing;
+		this.shadowMapSize = shadowMapSize;
 	}
 
 	protected override void Render(ScriptableRenderContext context, Camera[] cameras)
@@ -243,7 +250,7 @@ public class DitheredPipeline : RenderPipeline
 
 	void RenderShadows(ScriptableRenderContext context)
 	{
-		shadowMap = RenderTexture.GetTemporary(512, 512, 16, RenderTextureFormat.Depth);
+		shadowMap = RenderTexture.GetTemporary(shadowMapSize, shadowMapSize, 16, RenderTextureFormat.Depth);
 		shadowMap.filterMode = FilterMode.Bilinear;
 		shadowMap.wrapMode = TextureWrapMode.Clamp;
 
@@ -262,6 +269,10 @@ public class DitheredPipeline : RenderPipeline
 		cull.ComputeSpotShadowMatricesAndCullingPrimitives(0, out viewMatrix, out projectionMatrix, out splitData);
 
 		shadowBuffer.SetViewProjectionMatrices(viewMatrix, projectionMatrix);
+		shadowBuffer.SetGlobalFloat(
+			shadowBiasId, cull.visibleLights[0].light.shadowBias
+		);
+
 		context.ExecuteCommandBuffer(shadowBuffer);
 		shadowBuffer.Clear();
 		
@@ -285,6 +296,9 @@ public class DitheredPipeline : RenderPipeline
 		Matrix4x4 worldToShadowMatrix = scaleOffset*(projectionMatrix * viewMatrix);
 		shadowBuffer.SetGlobalMatrix(worldToShadowMatrixId, worldToShadowMatrix);
 		shadowBuffer.SetGlobalTexture(shadowMapId, shadowMap);
+		shadowBuffer.SetGlobalFloat(
+			shadowStrengthId, cull.visibleLights[0].light.shadowStrength
+		);
 
 		shadowBuffer.EndSample("Render Shadows");
 		context.ExecuteCommandBuffer(shadowBuffer);
