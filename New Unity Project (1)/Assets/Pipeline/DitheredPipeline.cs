@@ -3,6 +3,10 @@ using UnityEngine.Rendering;
 public class DitheredPipeline : RenderPipeline
 {
 	RenderTexture shadowMap;
+	int shadowMapSize;
+	const string shadowsSoftKeyword = "_SHADOWS_SOFT";
+	Vector4[] shadowData = new Vector4[maxVisibleLights];
+	Matrix4x4[] worldToShadowMatrices = new Matrix4x4[maxVisibleLights];
 
 	bool enableDynamicBatching;
 	bool gpuInstancing;
@@ -22,12 +26,14 @@ public class DitheredPipeline : RenderPipeline
 		Shader.PropertyToID("unity_LightIndicesOffsetAndCount");
 	static int shadowMapId = 
 		Shader.PropertyToID("_ShadowMap");
-	static int worldToShadowMatrixId =
-		Shader.PropertyToID("_WorldToShadowMatrix");
+	static int worldToShadowMatricesId =
+		Shader.PropertyToID("_WorldToShadowMatrices");
 	static int shadowBiasId = 
 		Shader.PropertyToID("_ShadowBias");
-	static int shadowStrengthId = 
-		Shader.PropertyToID("_ShadowStrength");
+	static int shadowDataId = 
+		Shader.PropertyToID("_ShadowData");
+	static int shadowMapSizeId = 
+		Shader.PropertyToID("_ShadowMapSize");
 
 
 
@@ -36,7 +42,6 @@ public class DitheredPipeline : RenderPipeline
 	Vector4[] visibleLightAttenuations = new Vector4[maxVisibleLights];
 	Vector4[] visibleLightSpotDirections = new Vector4[maxVisibleLights];
 
-	int shadowMapSize;
 
 	public DitheredPipeline(bool dynamicBatching, bool instancing, int shadowMapSize)
 	{
@@ -81,7 +86,9 @@ public class DitheredPipeline : RenderPipeline
 			RenderShadows(context);
 		}
 		else//because I don't configure lights if there are no visible lights, this part clears the lights`
+		{
 			cameraBuffer.SetGlobalVector(lightIndicesOffsetAndCountID, Vector4.zero);
+		}
 
 		context.SetupCameraProperties(camera);
 
@@ -198,6 +205,7 @@ public class DitheredPipeline : RenderPipeline
 
 			Vector4 attenuation = Vector4.zero;
 			attenuation.w = 1f;
+			Vector4 shadow = Vector4.zero;
 			if (light.lightType == LightType.Directional)
 			{
 				Vector4 v = light.localToWorldMatrix.GetColumn(2);
@@ -228,10 +236,21 @@ public class DitheredPipeline : RenderPipeline
 					float angleRange = Mathf.Max(innerCos - outerCos, 0.001f);
 					attenuation.z = 1f / angleRange;
 					attenuation.w = -outerCos * attenuation.z;
+
+					//shadows
+					Light shadowLight = light.light;
+					Bounds shadowBounds;
+					//if the light has shadows enabled and the shadows are contacting something thats visible
+					if (shadowLight.shadows != LightShadows.None && cull.GetShadowCasterBounds(i, out shadowBounds))
+					{
+						shadow.x = shadowLight.shadowStrength;
+						shadow.y = shadowLight.shadows == LightShadows.Soft ? 1f : 0f;
+					}
 				}
 			}
 
 			visibleLightAttenuations[i] = attenuation;
+			shadowData[i] = shadow;
 		}
 
 		//TODO: READ UP ON NATIVE LISTS AND JUNK
@@ -262,43 +281,60 @@ public class DitheredPipeline : RenderPipeline
 		context.ExecuteCommandBuffer(shadowBuffer);
 		shadowBuffer.Clear();
 
-
-		Matrix4x4 viewMatrix, projectionMatrix;
-		ShadowSplitData splitData;
-		//because we are essentially rendering the scene from the spotlight's pov, this sets up the spoof VP matricies
-		cull.ComputeSpotShadowMatricesAndCullingPrimitives(0, out viewMatrix, out projectionMatrix, out splitData);
-
-		shadowBuffer.SetViewProjectionMatrices(viewMatrix, projectionMatrix);
-		shadowBuffer.SetGlobalFloat(
-			shadowBiasId, cull.visibleLights[0].light.shadowBias
-		);
-
-		context.ExecuteCommandBuffer(shadowBuffer);
-		shadowBuffer.Clear();
-		
-
-		var shadowSettings = new ShadowDrawingSettings(cull, 0);
-		context.DrawShadows(ref shadowSettings);
-
-		if (SystemInfo.usesReversedZBuffer)//some gpus flip clipspace z
+		for(int i =0; i < cull.visibleLights.Length; i++)
 		{
-			projectionMatrix.m20 = -projectionMatrix.m20;
-			projectionMatrix.m21 = -projectionMatrix.m21;
-			projectionMatrix.m22 = -projectionMatrix.m22;
-			projectionMatrix.m23 = -projectionMatrix.m23;
+			if (i == maxVisibleLights)//skip this section if the light doesn't have shadows or we've hit the max number of lights
+				break;
+			if (shadowData[i].x <= 0f)
+				continue;
+
+			Matrix4x4 viewMatrix, projectionMatrix;
+			ShadowSplitData splitData;
+			//because we are essentially rendering the scene from the spotlight's pov, this sets up the spoof VP matricies
+			if(!cull.ComputeSpotShadowMatricesAndCullingPrimitives(i, out viewMatrix, out projectionMatrix, out splitData))
+			{//if the function was unable to generate useful matricies, just skip the light
+				shadowData[i].x = 0f;
+				continue;
+			}
+
+			shadowBuffer.SetViewProjectionMatrices(viewMatrix, projectionMatrix);
+			shadowBuffer.SetGlobalFloat(
+				shadowBiasId, cull.visibleLights[i].light.shadowBias
+			);
+
+			context.ExecuteCommandBuffer(shadowBuffer);
+			shadowBuffer.Clear();
+
+
+			var shadowSettings = new ShadowDrawingSettings(cull, i);
+			context.DrawShadows(ref shadowSettings);
+
+			if (SystemInfo.usesReversedZBuffer)//some gpus flip clipspace z
+			{
+				projectionMatrix.m20 = -projectionMatrix.m20;
+				projectionMatrix.m21 = -projectionMatrix.m21;
+				projectionMatrix.m22 = -projectionMatrix.m22;
+				projectionMatrix.m23 = -projectionMatrix.m23;
+			}
+
+			//clip space goes from -1 to 1, but texture space goes from 0 to 1, this will imbue that transformation into the matrix
+			var scaleOffset = Matrix4x4.identity;
+			scaleOffset.m00 = scaleOffset.m11 = scaleOffset.m22 = 0.5f;
+			scaleOffset.m03 = scaleOffset.m13 = scaleOffset.m23 = 0.5f;
+
+			worldToShadowMatrices[i] = scaleOffset * (projectionMatrix * viewMatrix);
 		}
 
-		//clip space goes from -1 to 1, but texture space goes from 0 to 1, this will imbue that transformation into the matrix
-		var scaleOffset = Matrix4x4.identity;
-		scaleOffset.m00 = scaleOffset.m11 = scaleOffset.m22 = 0.5f;
-		scaleOffset.m03 = scaleOffset.m13 = scaleOffset.m23 = 0.5f;
-
-		Matrix4x4 worldToShadowMatrix = scaleOffset*(projectionMatrix * viewMatrix);
-		shadowBuffer.SetGlobalMatrix(worldToShadowMatrixId, worldToShadowMatrix);
 		shadowBuffer.SetGlobalTexture(shadowMapId, shadowMap);
-		shadowBuffer.SetGlobalFloat(
-			shadowStrengthId, cull.visibleLights[0].light.shadowStrength
-		);
+		shadowBuffer.SetGlobalMatrixArray(worldToShadowMatricesId, worldToShadowMatrices);
+		shadowBuffer.SetGlobalVectorArray( shadowDataId, shadowData	);
+
+		//Used for soft shadows
+		float invShadowMapSize = 1f / shadowMapSize;
+		shadowBuffer.SetGlobalVector(shadowMapSizeId, new Vector4(invShadowMapSize, invShadowMapSize, shadowMapSize, shadowMapSize));
+
+
+		CoreUtils.SetKeyword(shadowBuffer, shadowsSoftKeyword, cull.visibleLights[0].light.shadows == LightShadows.Soft);
 
 		shadowBuffer.EndSample("Render Shadows");
 		context.ExecuteCommandBuffer(shadowBuffer);

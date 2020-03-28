@@ -96,6 +96,7 @@ LightmapSettings:
     m_PVRFilteringAtrousPositionSigmaAO: 1
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
+    m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
   m_UseShadowmask: 1
 --- !u!196 &4
@@ -166,7 +167,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78a55aaefd7b19f4689e046a2505420f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  color: {r: 1.3044893, g: 1.4019192, b: 1.4618678, a: 4.576086}
+  color: {r: 0.66571933, g: 0.98943895, b: 0.8651205, a: 2.3891623}
 --- !u!135 &122076826
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -194,6 +195,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -272,7 +274,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78a55aaefd7b19f4689e046a2505420f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  color: {r: 1.1227453, g: 0.8562419, b: 0.8100494, a: 2.8885145}
+  color: {r: 1.799062, g: 1.6581855, b: 1.8234211, a: 4.2111845}
 --- !u!135 &140025251
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -300,6 +302,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -378,7 +381,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78a55aaefd7b19f4689e046a2505420f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  color: {r: 1.6255202, g: 0.40826756, b: 0.71318734, a: 3.2326796}
+  color: {r: 0.42712536, g: 0.64636743, b: 0.67699087, a: 4.5187287}
 --- !u!135 &178265592
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -406,6 +409,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -484,7 +488,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78a55aaefd7b19f4689e046a2505420f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  color: {r: 0.6111493, g: 1.5579978, b: 1.1512121, a: 4.111167}
+  color: {r: 1.9159845, g: 1.7851766, b: 1.9490763, a: 4.329703}
 --- !u!135 &288584421
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -512,6 +516,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -569,19 +574,20 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 460509503}
   m_Enabled: 1
-  serializedVersion: 9
+  serializedVersion: 10
   m_Type: 0
+  m_Shape: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 212.92
   m_Range: 21.03
-  m_SpotAngle: 74
+  m_SpotAngle: 93
   m_InnerSpotAngle: 1
   m_CookieSize: 10
   m_Shadows:
     m_Type: 1
     m_Resolution: -1
     m_CustomResolution: -1
-    m_Strength: 1
+    m_Strength: 0.722
     m_Bias: 1.859
     m_NormalBias: 0.4
     m_NearPlane: 3.72
@@ -614,7 +620,7 @@ Light:
   m_Lightmapping: 4
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
-  m_BounceIntensity: 1
+  m_BounceIntensity: 0
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
@@ -681,7 +687,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78a55aaefd7b19f4689e046a2505420f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  color: {r: 0.5848423, g: 0.5164658, b: 0.4941243, a: 2.3512416}
+  color: {r: 0.4462551, g: 0.4682537, b: 0.4653042, a: 2.4677277}
 --- !u!135 &505774296
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -709,6 +715,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -770,9 +777,9 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 3
+  serializedVersion: 4
   m_Convex: 0
-  m_CookingOptions: 14
+  m_CookingOptions: 30
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!23 &523825472
 MeshRenderer:
@@ -788,6 +795,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -828,7 +836,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 523825470}
   m_LocalRotation: {x: -0, y: -0, z: 0.4999996, w: 0.8660257}
-  m_LocalPosition: {x: 9.7, y: -14.9, z: -0.22777367}
+  m_LocalPosition: {x: -27.88, y: 6.89, z: -0.22777367}
   m_LocalScale: {x: 3.845, y: 3.845, z: 3.845}
   m_Children: []
   m_Father: {fileID: 0}
@@ -880,7 +888,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78a55aaefd7b19f4689e046a2505420f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  color: {r: 2.3065133, g: 3.4275727, b: 2.0526927, a: 4.1673136}
+  color: {r: 0.5402473, g: 0.57870466, b: 0.65703714, a: 1.7801301}
 --- !u!135 &665385335
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -908,6 +916,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -986,7 +995,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78a55aaefd7b19f4689e046a2505420f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  color: {r: 1.8265675, g: 1.4501029, b: 1.2898175, a: 2.20675}
+  color: {r: 0.6690568, g: 0.40586597, b: 0.6277243, a: 3.446914}
 --- !u!135 &1100179085
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -1014,6 +1023,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -1214,7 +1224,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78a55aaefd7b19f4689e046a2505420f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  color: {r: 2.2053797, g: 1.1777554, b: 4.232897, a: 4.684953}
+  color: {r: 1.3232772, g: 1.2516814, b: 1.4411552, a: 3.4949203}
 --- !u!135 &2010971317
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -1242,6 +1252,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -1320,7 +1331,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78a55aaefd7b19f4689e046a2505420f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  color: {r: 0.57440066, g: 0.4402635, b: 0.42833948, a: 3.393643}
+  color: {r: 1.9609362, g: 1.1878896, b: 1.0228817, a: 3.5196853}
 --- !u!135 &2110224607
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -1348,6 +1359,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:

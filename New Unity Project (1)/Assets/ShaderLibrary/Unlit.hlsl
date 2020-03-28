@@ -3,7 +3,7 @@
 
 
 #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Common.hlsl"
-
+ 
 
 
 //uses the CBUFFER_START() because cbuffer UnityPerFrame { ... }; isn't supported on all platforms
