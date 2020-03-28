@@ -5,7 +5,7 @@
 #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Common.hlsl"
 #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Shadow/ShadowSamplingTent.hlsl"
 #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Packing.hlsl"
-
+ 
 
 
 //uses the CBUFFER_START() because cbuffer UnityPerFrame { ... }; isn't supported on all platforms
@@ -50,11 +50,13 @@ SAMPLER_CMP(sampler_ShadowMap);
 
 float HardShadowAttenuation(float4 shadowPos)
 {
-	return SAMPLE_TEXTURE2D_SHADOW(_ShadowMap, sampler_ShadowMap, shadowPos.xyz);
+	//return shadowPos.z;//abs(frac(shadowPos.z)) + 1000;
+	return SAMPLE_TEXTURE2D_SHADOW(
+		_ShadowMap, sampler_ShadowMap, shadowPos.xyz); //round(shadowPos.z - SAMPLE_TEXTURE2D(_ShadowMap, sampler_ShadowMap, shadowPos.xy).r);
 }
 
 float SoftShadowAttenuation(float4 shadowPos)
-{
+{/*
 	real tentWeights[9];
 	real2 tentUVs[9];
 	SampleShadow_ComputeSamples_Tent_5x5(_ShadowMapSize, shadowPos.xy, tentWeights, tentUVs);
@@ -64,8 +66,9 @@ float SoftShadowAttenuation(float4 shadowPos)
 		attenuation += tentWeights[i] * SAMPLE_TEXTURE2D_SHADOW(
 			_ShadowMap, sampler_ShadowMap, float3(tentUVs[i].xy, shadowPos.z)
 		);
-	}
-	return attenuation;
+	}*/
+	return 0.5;
+	//return attenuation;
 }
 
 
@@ -82,9 +85,9 @@ float ShadowAttenuation(int index, float3 worldPos)
 	shadowPos.xyz /= shadowPos.w;
 	float attenuation;
 	
-#if defined(SHADOWS_HARD)
-	#if defined(SHADOWS_SOFT)
-		if (_ShadowData[index].y == 0)//if hard shadows else if soft shadows
+#ifdef _SHADOWS_HARD
+	#ifdef _SHADOWS_SOFT
+		if (_ShadowData[index].y <= 0)//if hard shadows else if soft shadows
 			attenuation = HardShadowAttenuation(shadowPos);
 		else
 			attenuation = SoftShadowAttenuation(shadowPos);

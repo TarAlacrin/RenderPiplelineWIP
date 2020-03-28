@@ -299,7 +299,7 @@ public class DitheredPipeline : RenderPipeline
 
 		Rect tileViewport = new Rect(0f, 0f, tileSize, tileSize);
 
-		shadowMap = RenderTexture.GetTemporary(shadowMapSize, shadowMapSize, 16, RenderTextureFormat.Depth);
+		shadowMap = RenderTexture.GetTemporary(shadowMapSize, shadowMapSize, 16, RenderTextureFormat.Shadowmap);
 		shadowMap.filterMode = FilterMode.Bilinear;
 		shadowMap.wrapMode = TextureWrapMode.Clamp;
 
@@ -331,18 +331,12 @@ public class DitheredPipeline : RenderPipeline
 				continue;
 			}
 
-			if (shadowData[i].y <= 0)
-				hardShadows = true;
-			else
-				softShadows = true;
-
 
 			//this is used for tiling 
 			float tileOffsetX = tileIndex % split;
 			float tileOffsetY = tileIndex / split;
 			tileViewport.x = tileOffsetX * tileSize;
 			tileViewport.y = tileOffsetY * tileSize;
-			tileIndex ++;//only advance the tileindex when we actually use a tile
 
 			if(split >1)//don't need to do the tiling stuff if there is only one tile
 			{
@@ -387,9 +381,18 @@ public class DitheredPipeline : RenderPipeline
 				tileMatrix.m13 = tileOffsetY * tileScale;
 				worldToShadowMatrices[i] = tileMatrix * worldToShadowMatrices[i];
 			}
+
+
+			tileIndex++;//only advance the tileindex when we actually use a tile
+			if (shadowData[i].y <= 0)
+				hardShadows = true;
+			else
+				softShadows = true;
+
+
 		}
 
-		if(split >1)
+		if (split >1)
 			shadowBuffer.DisableScissorRect();
 
 		shadowBuffer.SetGlobalTexture(shadowMapId, shadowMap);
@@ -399,7 +402,6 @@ public class DitheredPipeline : RenderPipeline
 		//Used for soft shadows
 		float invShadowMapSize = 1f / shadowMapSize;
 		shadowBuffer.SetGlobalVector(shadowMapSizeId, new Vector4(invShadowMapSize, invShadowMapSize, shadowMapSize, shadowMapSize));
-
 
 		CoreUtils.SetKeyword(shadowBuffer, shadowsHardKeyword, hardShadows);
 		CoreUtils.SetKeyword(shadowBuffer, shadowsSoftKeyword, softShadows);

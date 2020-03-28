@@ -167,7 +167,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78a55aaefd7b19f4689e046a2505420f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  color: {r: 0.66571933, g: 0.98943895, b: 0.8651205, a: 2.3891623}
+  color: {r: 1.5672512, g: 1.5861257, b: 1.0622132, a: 2.626851}
 --- !u!135 &122076826
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -274,7 +274,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78a55aaefd7b19f4689e046a2505420f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  color: {r: 1.799062, g: 1.6581855, b: 1.8234211, a: 4.2111845}
+  color: {r: 1.4142064, g: 1.6764841, b: 1.6563305, a: 2.8594282}
 --- !u!135 &140025251
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -381,7 +381,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78a55aaefd7b19f4689e046a2505420f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  color: {r: 0.42712536, g: 0.64636743, b: 0.67699087, a: 4.5187287}
+  color: {r: 1.0952628, g: 1.4363043, b: 1.2056844, a: 3.205018}
 --- !u!135 &178265592
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -488,7 +488,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78a55aaefd7b19f4689e046a2505420f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  color: {r: 1.9159845, g: 1.7851766, b: 1.9490763, a: 4.329703}
+  color: {r: 1.8267149, g: 2.0146863, b: 2.0599718, a: 2.5000482}
 --- !u!135 &288584421
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -578,18 +578,18 @@ Light:
   m_Type: 0
   m_Shape: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 212.92
-  m_Range: 21.03
-  m_SpotAngle: 98.3
+  m_Intensity: 96.5
+  m_Range: 2547.3
+  m_SpotAngle: 93
   m_InnerSpotAngle: 1
   m_CookieSize: 10
   m_Shadows:
     m_Type: 1
     m_Resolution: -1
     m_CustomResolution: -1
-    m_Strength: 0.948
-    m_Bias: 1.859
-    m_NormalBias: 0.4
+    m_Strength: 1
+    m_Bias: 2
+    m_NormalBias: 0.82
     m_NearPlane: 3.72
     m_CullingMatrixOverride:
       e00: 1
@@ -634,13 +634,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 460509503}
-  m_LocalRotation: {x: 0.03236707, y: 0.74294657, z: -0.2899292, w: 0.60243165}
-  m_LocalPosition: {x: -32.98, y: 8.61, z: -1.84}
+  m_LocalRotation: {x: -0.7345449, y: 0.3823957, z: -0.5571848, w: -0.061340015}
+  m_LocalPosition: {x: -34.532, y: 9.646, z: -0.967}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 151.979, y: 276.899, z: 160.048}
+  m_LocalEulerAnglesHint: {x: 148.919, y: 295.712, z: 35.178986}
 --- !u!1 &505774293
 GameObject:
   m_ObjectHideFlags: 0
@@ -687,7 +687,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78a55aaefd7b19f4689e046a2505420f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  color: {r: 0.4462551, g: 0.4682537, b: 0.4653042, a: 2.4677277}
+  color: {r: 0.5535632, g: 1.8090636, b: 0.92728066, a: 2.7211657}
 --- !u!135 &505774296
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -888,7 +888,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78a55aaefd7b19f4689e046a2505420f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  color: {r: 0.5402473, g: 0.57870466, b: 0.65703714, a: 1.7801301}
+  color: {r: 2.5439954, g: 2.0971885, b: 2.3192902, a: 4.2376833}
 --- !u!135 &665385335
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -995,7 +995,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78a55aaefd7b19f4689e046a2505420f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  color: {r: 0.6690568, g: 0.40586597, b: 0.6277243, a: 3.446914}
+  color: {r: 1.0940868, g: 3.1666524, b: 1.4604146, a: 3.889775}
 --- !u!135 &1100179085
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -1224,7 +1224,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78a55aaefd7b19f4689e046a2505420f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  color: {r: 1.3232772, g: 1.2516814, b: 1.4411552, a: 3.4949203}
+  color: {r: 0.5818279, g: 1.0179566, b: 0.8942001, a: 2.8461928}
 --- !u!135 &2010971317
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -1331,7 +1331,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78a55aaefd7b19f4689e046a2505420f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  color: {r: 1.9609362, g: 1.1878896, b: 1.0228817, a: 3.5196853}
+  color: {r: 2.821429, g: 1.539285, b: 2.2861338, a: 3.7615936}
 --- !u!135 &2110224607
 SphereCollider:
   m_ObjectHideFlags: 0
