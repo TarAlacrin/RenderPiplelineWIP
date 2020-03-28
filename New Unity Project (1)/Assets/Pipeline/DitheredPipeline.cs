@@ -269,6 +269,10 @@ public class DitheredPipeline : RenderPipeline
 
 	void RenderShadows(ScriptableRenderContext context)
 	{
+		//because we support 16 lights, this will tile the shadowmap into 16 portions
+		float tileSize = shadowMapSize / 4;
+		Rect tileViewport = new Rect(0f, 0f, tileSize, tileSize);
+
 		shadowMap = RenderTexture.GetTemporary(shadowMapSize, shadowMapSize, 16, RenderTextureFormat.Depth);
 		shadowMap.filterMode = FilterMode.Bilinear;
 		shadowMap.wrapMode = TextureWrapMode.Clamp;
@@ -297,6 +301,17 @@ public class DitheredPipeline : RenderPipeline
 				continue;
 			}
 
+
+			//this is used for tiling 
+			float tileOffsetX = i % 4;
+			float tileOffsetY = i / 4;
+			tileViewport.x = tileOffsetX * tileSize;
+			tileViewport.y = tileOffsetY * tileSize;
+
+			shadowBuffer.SetViewport(tileViewport);
+			//stops the different tiled shadow maps from cross sampling by adding a border around each one
+			shadowBuffer.EnableScissorRect(new Rect(tileViewport.x + 4f, tileViewport.y + 4f, tileSize - 8f, tileSize - 8f));
+
 			shadowBuffer.SetViewProjectionMatrices(viewMatrix, projectionMatrix);
 			shadowBuffer.SetGlobalFloat(
 				shadowBiasId, cull.visibleLights[i].light.shadowBias
@@ -321,10 +336,19 @@ public class DitheredPipeline : RenderPipeline
 			var scaleOffset = Matrix4x4.identity;
 			scaleOffset.m00 = scaleOffset.m11 = scaleOffset.m22 = 0.5f;
 			scaleOffset.m03 = scaleOffset.m13 = scaleOffset.m23 = 0.5f;
-
 			worldToShadowMatrices[i] = scaleOffset * (projectionMatrix * viewMatrix);
+
+			//this handles making sure that each light samples from the right tile of the tiled shadowmap
+			var tileMatrix = Matrix4x4.identity;
+			tileMatrix.m00 = tileMatrix.m11 = 0.25f;
+			tileMatrix.m03 = tileOffsetX * 0.25f;
+			tileMatrix.m13 = tileOffsetY * 0.25f;
+			worldToShadowMatrices[i] = tileMatrix * worldToShadowMatrices[i];
+
+
 		}
 
+		shadowBuffer.DisableScissorRect();
 		shadowBuffer.SetGlobalTexture(shadowMapId, shadowMap);
 		shadowBuffer.SetGlobalMatrixArray(worldToShadowMatricesId, worldToShadowMatrices);
 		shadowBuffer.SetGlobalVectorArray( shadowDataId, shadowData	);

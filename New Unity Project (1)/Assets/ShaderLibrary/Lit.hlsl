@@ -67,7 +67,7 @@ float ShadowAttenuation(int index, float3 worldPos)
 		SampleShadow_ComputeSamples_Tent_5x5(_ShadowMapSize, shadowPos.xy, tentWeights, tentUVs);
 		attenuation = 0;
 		for (int i = 0; i < 9; i++)
-		{
+		{ 
 			attenuation += tentWeights[i] * SAMPLE_TEXTURE2D_SHADOW(
 				_ShadowMap, sampler_ShadowMap, float3(tentUVs[i].xy, shadowPos.z)
 			);

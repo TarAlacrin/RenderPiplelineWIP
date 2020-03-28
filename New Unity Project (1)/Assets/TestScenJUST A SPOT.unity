@@ -580,14 +580,14 @@ Light:
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 212.92
   m_Range: 21.03
-  m_SpotAngle: 93
+  m_SpotAngle: 98.3
   m_InnerSpotAngle: 1
   m_CookieSize: 10
   m_Shadows:
     m_Type: 1
     m_Resolution: -1
     m_CustomResolution: -1
-    m_Strength: 0.722
+    m_Strength: 0.948
     m_Bias: 1.859
     m_NormalBias: 0.4
     m_NearPlane: 3.72
