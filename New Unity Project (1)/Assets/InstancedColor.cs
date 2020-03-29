@@ -18,8 +18,8 @@ public class InstancedColor : MonoBehaviour
 	void OnValidate()
     {
 
-		color = Random.ColorHSV() * (1f + 3f * Random.value) + Color.grey*0.75f;
-
+		color = Random.ColorHSV() * (2f*Random.value) + Color.white*0.5f;
+		color.a = 1f;
 		if (propertyBlock == null)
 			propertyBlock = new MaterialPropertyBlock();
 

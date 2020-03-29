@@ -12,5 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71d06e6cffc2f624ba5bfa597a4331ac, type: 3}
   m_Name: New Dithered Pipeline Asset
   m_EditorClassIdentifier: 
-  dynamicBatching: 1
-  gpuInstancing: 1
+  dynamicBatching: 0
+  gpuInstancing: 0
+  secondaryLightsAreVertexLights: 0
+  shadowDistance: 50
+  shadowMapSize: 4096
+  shadowCascades: 4

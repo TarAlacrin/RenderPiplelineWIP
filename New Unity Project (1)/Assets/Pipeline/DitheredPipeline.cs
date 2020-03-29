@@ -5,9 +5,11 @@ public class DitheredPipeline : RenderPipeline
 	RenderTexture shadowMap;
 	const string shadowsSoftKeyword = "_SHADOWS_SOFT";
 	const string shadowsHardKeyword = "_SHADOWS_HARD";
+	const string secondaryVertexLightsKeyword = "_VERTEX_SECONDARY_LIGHTS";
 
 	bool enableDynamicBatching;
 	bool gpuInstancing;
+	bool secondaryLightsAreVertexLights;
 
 	const int maxVisibleLights = 16;
 
@@ -21,6 +23,7 @@ public class DitheredPipeline : RenderPipeline
 		Shader.PropertyToID("_VisibleLightSpotDirections");
 	static int lightIndicesOffsetAndCountID =
 		Shader.PropertyToID("unity_LightIndicesOffsetAndCount");
+
 	static int shadowMapId = 
 		Shader.PropertyToID("_ShadowMap");
 	static int worldToShadowMatricesId =
@@ -31,6 +34,8 @@ public class DitheredPipeline : RenderPipeline
 		Shader.PropertyToID("_ShadowData");
 	static int shadowMapSizeId = 
 		Shader.PropertyToID("_ShadowMapSize");
+	static int globalShadowDataId = 
+		Shader.PropertyToID("_GlobalShadowData");
 
 
 
@@ -48,14 +53,18 @@ public class DitheredPipeline : RenderPipeline
 	Matrix4x4[] worldToShadowMatrices = new Matrix4x4[maxVisibleLights];
 	int shadowMapSize;
 	int shadowTileCount;
+	float shadowDistance;
 
 
-	public DitheredPipeline(bool dynamicBatching, bool instancing, int shadowMapSize)
+
+	public DitheredPipeline(bool dynamicBatching, bool instancing, bool secondaryLightsAreVertexLights, int shadowMapSize, float shadowDistance)
 	{
 		GraphicsSettings.lightsUseLinearIntensity = true;
 		enableDynamicBatching = dynamicBatching;
 		gpuInstancing = instancing;
 		this.shadowMapSize = shadowMapSize;
+		this.secondaryLightsAreVertexLights = secondaryLightsAreVertexLights;
+		this.shadowDistance = shadowDistance;
 	}
 
 	protected override void Render(ScriptableRenderContext context, Camera[] cameras)
@@ -70,6 +79,8 @@ public class DitheredPipeline : RenderPipeline
 		ScriptableCullingParameters cullingParams;
 		if (!camera.TryGetCullingParameters(out cullingParams))
 			return;
+
+		cullingParams.shadowDistance = Mathf.Min(shadowDistance, camera.farClipPlane);//this is used when calculating directional light shadows (specifically the "size" of the directional light's camera)
 
 		//ADD UI TO SCENE VIEW
 #if UNITY_EDITOR
@@ -92,12 +103,15 @@ public class DitheredPipeline : RenderPipeline
 				cameraBuffer.DisableShaderKeyword(shadowsHardKeyword);
 				cameraBuffer.DisableShaderKeyword(shadowsSoftKeyword);
 			}
+
+			CoreUtils.SetKeyword(cameraBuffer, secondaryVertexLightsKeyword, this.secondaryLightsAreVertexLights);
 		}
 		else//because I don't configure lights if there are no visible lights, this part clears the lights`
 		{
 			cameraBuffer.SetGlobalVector(lightIndicesOffsetAndCountID, Vector4.zero);
 			cameraBuffer.DisableShaderKeyword(shadowsHardKeyword);
 			cameraBuffer.DisableShaderKeyword(shadowsSoftKeyword);
+			cameraBuffer.EnableShaderKeyword(secondaryVertexLightsKeyword);
 		}
 
 		context.SetupCameraProperties(camera);
@@ -198,8 +212,6 @@ public class DitheredPipeline : RenderPipeline
 		var filterSettings = new FilteringSettings(RenderQueueRange.all);
 
 		context.DrawRenderers(cull, ref drawSettings, ref filterSettings );
-
-
 	}
 
 
@@ -224,6 +236,9 @@ public class DitheredPipeline : RenderPipeline
 				v.y = -v.y;
 				v.z = -v.z;
 				visibleLightDirectionsOrPositions[i] = v;
+
+				shadow = ConfigureShadows(i, light.light);
+				shadow.z = 1f;//marks the shadow as being a directional light shadow
 			}
 			else
 			{
@@ -250,15 +265,7 @@ public class DitheredPipeline : RenderPipeline
 					attenuation.w = -outerCos * attenuation.z;
 
 					//shadows
-					Light shadowLight = light.light;
-					Bounds shadowBounds;
-					//if the light has shadows enabled and the shadows are contacting something thats visible
-					if (shadowLight.shadows != LightShadows.None && cull.GetShadowCasterBounds(i, out shadowBounds))
-					{
-						shadowTileCount += 1;
-						shadow.x = shadowLight.shadowStrength;
-						shadow.y = shadowLight.shadows == LightShadows.Soft ? 1f : 0f;
-					}
+					shadow = ConfigureShadows(i , light.light);
 				}
 			}
 
@@ -277,7 +284,26 @@ public class DitheredPipeline : RenderPipeline
 			}
 			cull.SetLightIndexMap(lightIndicies);
 		}
+
 	}
+
+	Vector4 ConfigureShadows(int lightIndex, Light shadowLight)
+	{
+		//shadows
+		Vector4 shadow = Vector4.zero;
+		Bounds shadowBounds;
+		//if the light has shadows enabled and the shadows are contacting something thats visible
+		if (shadowLight.shadows != LightShadows.None && cull.GetShadowCasterBounds(lightIndex, out shadowBounds))
+		{
+			shadowTileCount += 1;
+			shadow.x = shadowLight.shadowStrength;
+			shadow.y = shadowLight.shadows == LightShadows.Soft ? 1f : 0f;
+		}
+
+		return shadow;
+	}
+
+
 
 
 	void RenderShadows(ScriptableRenderContext context)
@@ -296,7 +322,6 @@ public class DitheredPipeline : RenderPipeline
 		//because we support 16 lights, this will tile the shadowmap into 16 portions
 		float tileSize = shadowMapSize / split;
 		float tileScale = 1f / split;
-
 		Rect tileViewport = new Rect(0f, 0f, tileSize, tileSize);
 
 		shadowMap = RenderTexture.GetTemporary(shadowMapSize, shadowMapSize, 16, RenderTextureFormat.Shadowmap);
@@ -308,6 +333,7 @@ public class DitheredPipeline : RenderPipeline
 		//shadowBuffer.SetRenderTarget(shadowMap, RenderBufferLoadAction.DontCare, RenderBufferStoreAction.Store);
 
 		shadowBuffer.BeginSample("Render Shadows");
+		shadowBuffer.SetGlobalVector(globalShadowDataId, new Vector4(tileScale, shadowDistance*shadowDistance));
 		context.ExecuteCommandBuffer(shadowBuffer);
 		shadowBuffer.Clear();
 
@@ -324,9 +350,25 @@ public class DitheredPipeline : RenderPipeline
 
 			Matrix4x4 viewMatrix, projectionMatrix;
 			ShadowSplitData splitData;
-			//because we are essentially rendering the scene from the spotlight's pov, this sets up the spoof VP matricies
-			if(!cull.ComputeSpotShadowMatricesAndCullingPrimitives(i, out viewMatrix, out projectionMatrix, out splitData))
-			{//if the function was unable to generate useful matricies, just skip the light
+
+			bool validShadows;
+			//because we are essentially rendering the scene from the light's pov, this sets up the spoof VP matricies for the light's perspective. Also checks to see whether it was able to generate a sensible matrix
+			if (shadowData[i].z >0f)//if the light is directional
+			{
+				validShadows = cull.ComputeDirectionalShadowMatricesAndCullingPrimitives(
+					i, 0, 1, Vector3.right, (int)tileSize,
+					cull.visibleLights[i].light.shadowNearPlane,
+					out viewMatrix, out projectionMatrix, out splitData
+					);
+
+			}
+			else //spotlight
+			{
+				validShadows = cull.ComputeSpotShadowMatricesAndCullingPrimitives(i, out viewMatrix, out projectionMatrix, out splitData);
+			}
+
+			if (!validShadows)
+			{
 				shadowData[i].x = 0f;
 				continue;
 			}
@@ -337,24 +379,22 @@ public class DitheredPipeline : RenderPipeline
 			float tileOffsetY = tileIndex / split;
 			tileViewport.x = tileOffsetX * tileSize;
 			tileViewport.y = tileOffsetY * tileSize;
+			shadowData[i].z = tileOffsetX * tileScale;
+			shadowData[i].w = tileOffsetY * tileScale;
 
-			if(split >1)//don't need to do the tiling stuff if there is only one tile
-			{
-				shadowBuffer.SetViewport(tileViewport);
-				//stops the different tiled shadow maps from cross sampling by adding a border around each one
-				shadowBuffer.EnableScissorRect(new Rect(tileViewport.x + 4f, tileViewport.y + 4f, tileSize - 8f, tileSize - 8f));
-			}
+			shadowBuffer.SetViewport(tileViewport);
+			//stops the different tiled shadow maps from cross sampling by adding a border around each one
+			shadowBuffer.EnableScissorRect(new Rect(tileViewport.x + 4f, tileViewport.y + 4f, tileSize - 8f, tileSize - 8f));
 
 			shadowBuffer.SetViewProjectionMatrices(viewMatrix, projectionMatrix);
-			shadowBuffer.SetGlobalFloat(
-				shadowBiasId, cull.visibleLights[i].light.shadowBias
-			);
+			shadowBuffer.SetGlobalFloat( shadowBiasId, cull.visibleLights[i].light.shadowBias );
 
 			context.ExecuteCommandBuffer(shadowBuffer);
 			shadowBuffer.Clear();
 
 
 			var shadowSettings = new ShadowDrawingSettings(cull, i);
+			shadowSettings.splitData = splitData;
 			context.DrawShadows(ref shadowSettings);
 
 			if (SystemInfo.usesReversedZBuffer)//some gpus flip clipspace z
@@ -372,18 +412,7 @@ public class DitheredPipeline : RenderPipeline
 			worldToShadowMatrices[i] = scaleOffset * (projectionMatrix * viewMatrix);
 
 
-			if(split > 1)
-			{
-				//this handles making sure that each light samples from the right tile of the tiled shadowmap
-				var tileMatrix = Matrix4x4.identity;
-				tileMatrix.m00 = tileMatrix.m11 = tileScale;
-				tileMatrix.m03 = tileOffsetX * tileScale;
-				tileMatrix.m13 = tileOffsetY * tileScale;
-				worldToShadowMatrices[i] = tileMatrix * worldToShadowMatrices[i];
-			}
-
-
-			tileIndex++;//only advance the tileindex when we actually use a tile
+			tileIndex+=1;//only advance the tileindex when we actually use a tile
 			if (shadowData[i].y <= 0)
 				hardShadows = true;
 			else
@@ -392,8 +421,7 @@ public class DitheredPipeline : RenderPipeline
 
 		}
 
-		if (split >1)
-			shadowBuffer.DisableScissorRect();
+		shadowBuffer.DisableScissorRect();
 
 		shadowBuffer.SetGlobalTexture(shadowMapId, shadowMap);
 		shadowBuffer.SetGlobalMatrixArray(worldToShadowMatricesId, worldToShadowMatrices);
